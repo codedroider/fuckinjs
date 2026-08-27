@@ -30,9 +30,9 @@ const fuckinjs = {
     }
 };
 
-(function() {
+(async function() {
     const scripts = document.querySelectorAll('script[type="text/fuckinjs"]');
-    scripts.forEach(async (scriptTag) => {
+    for (const scriptTag of scripts) {
         let hiddenCode = '';
         const src = scriptTag.getAttribute('src');
 
@@ -42,14 +42,13 @@ const fuckinjs = {
                 hiddenCode = await response.text();
             } catch (e) {
                 console.error(`failed to load ${src}`);
-                return;
+                continue;
             }
         } else {
             hiddenCode = scriptTag.textContent;
         }
 
         const visibleJs = fuckinjs.decompile(hiddenCode);
-        scriptTag.parentNode.removeChild(scriptTag);
 
         if (visibleJs) {
             try {
@@ -58,5 +57,9 @@ const fuckinjs = {
                 console.error('fuckinjs runtime error');
             }
         }
-    });
+        
+        if (scriptTag.parentNode) {
+            scriptTag.parentNode.removeChild(scriptTag);
+        }
+    }
 })();
