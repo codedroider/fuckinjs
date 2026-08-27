@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fuckin.js</title>
+    <style>
+        body { font-family: sans-serif; background: #0d1117; color: #c9d1d9; padding: 20px; text-align: center; }
+        textarea { width: 90%; height: 120px; background: #161b22; border: 1px solid #30363d; color: #fff; border-radius: 4px; padding: 10px; margin: 10px 0; font-family: monospace; resize: vertical; }
+        button { padding: 8px 15px; background: #238636; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        #status { margin-top: 15px; color: #8b949e; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <h2>fuckin.js</h2>
+    
+    <div>visible javascript input</div>
+    <textarea id="input" placeholder="alert('hello');"></textarea>
+    
+    <button onclick="runcompile()">make invisible</button>
+    <button onclick="copycode()">copy output</button>
+    
+    <div>invisible output (looks empty but contains code)</div>
+    <textarea id="output" placeholder="invisible text will appear here"></textarea>
+    
+    <div id="status">ready</div>
+
+    <script src="fuckin.js"></script>
+    <script>
+        function runcompile() {
+            const input = document.getElementById('input').value;
+            const out = document.getElementById('output');
+            const status = document.getElementById('status');
+            
+            if (!input.trim()) {
+                status.innerText = 'input is empty';
+                return;
+            }
+            
+            const result = fuckinjs.compile(input);
+            out.value = result;
+            status.innerText = `done: code hidden in ${result.length} invisible symbols (${(result.length * 2 / 1024).toFixed(2)} kb)`;
+        }
+
+        function copycode() {
+            const out = document.getElementById('output');
+            const status = document.getElementById('status');
+            if (!out.value) {
+                status.innerText = 'nothing to copy';
+                return;
+            }
+            out.select();
+            out.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(out.value);
+            status.innerText = 'copied to clipboard';
+        }
+    </script>
+
+</body>
+</html>
