@@ -2,7 +2,7 @@ const fuckinjs = {
     compile: function(str) {
         let result = '';
         for (let i = 0; i < str.length; i++) {
-            const bin = str.charCodeAt(i).toString(2).padStart(8, '0');
+            const bin = str.charCodeAt(i).toString(2);
             for (let j = 0; j < bin.length; j++) {
                 result += bin[j] === '0' ? '\u200b' : '\u200c';
             }
@@ -11,20 +11,16 @@ const fuckinjs = {
         return result;
     },
     decompile: function(str) {
-        let currentBin = '';
+        const parts = str.split('\u3164');
         let result = '';
-        for (let i = 0; i < str.length; i++) {
-            const char = str[i];
-            if (char === '\u200b') {
-                currentBin += '0';
-            } else if (char === '\u200c') {
-                currentBin += '1';
-            } else if (char === '\u3164') {
-                if (currentBin) {
-                    result += String.fromCharCode(parseInt(currentBin, 2));
-                    currentBin = '';
-                }
+        for (let i = 0; i < parts.length; i++) {
+            const hiddenBin = parts[i];
+            if (!hiddenBin) continue;
+            let bin = '';
+            for (let j = 0; j < hiddenBin.length; j++) {
+                bin += hiddenBin[j] === '\u200b' ? '0' : '1';
             }
+            result += String.fromCharCode(parseInt(bin, 2));
         }
         return result;
     }
