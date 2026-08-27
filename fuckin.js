@@ -32,10 +32,25 @@ const fuckinjs = {
 
 (function() {
     const scripts = document.querySelectorAll('script[type="text/fuckinjs"]');
-    scripts.forEach(scriptTag => {
-        const hiddenCode = scriptTag.textContent;
+    scripts.forEach(async (scriptTag) => {
+        let hiddenCode = '';
+        const src = scriptTag.getAttribute('src');
+
+        if (src) {
+            try {
+                const response = await fetch(src);
+                hiddenCode = await response.text();
+            } catch (e) {
+                console.error(`failed to load ${src}`);
+                return;
+            }
+        } else {
+            hiddenCode = scriptTag.textContent;
+        }
+
         const visibleJs = fuckinjs.decompile(hiddenCode);
         scriptTag.parentNode.removeChild(scriptTag);
+
         if (visibleJs) {
             try {
                 eval(visibleJs);
