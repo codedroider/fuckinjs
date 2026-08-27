@@ -65,7 +65,7 @@
                 return;
             }
             const randomStr = Math.random().toString(36).substring(2);
-            const blob = new Blob([out], { type: 'text/plain' });
+            const blob = new Blob([out], { type: 'application/octet-stream' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
