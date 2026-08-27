@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fuckin.js</title>
+    <title>fuckin.js (.fjs)</title>
     <style>
         body { font-family: sans-serif; background: #0d1117; color: #c9d1d9; padding: 20px; text-align: center; }
         textarea { width: 90%; height: 120px; background: #161b22; border: 1px solid #30363d; color: #fff; border-radius: 4px; padding: 10px; margin: 10px 0; font-family: monospace; resize: vertical; }
@@ -13,13 +13,14 @@
 </head>
 <body>
 
-    <h2>fuckin.js</h2>
+    <h2>fuckin.js (.fjs)</h2>
     
     <div>visible javascript input</div>
     <textarea id="input" placeholder="alert('hello');"></textarea>
     
     <button onclick="runcompile()">make invisible</button>
     <button onclick="copycode()">copy output</button>
+    <button onclick="downloadfjs()">download .fjs file</button>
     
     <div>invisible output (looks empty but contains code)</div>
     <textarea id="output" placeholder="invisible text will appear here"></textarea>
@@ -54,6 +55,26 @@
             out.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(out.value);
             status.innerText = 'copied to clipboard';
+        }
+
+        function downloadfjs() {
+            const out = document.getElementById('output').value;
+            const status = document.getElementById('status');
+            if (!out) {
+                status.innerText = 'nothing to download';
+                return;
+            }
+            const randomStr = Math.random().toString(36).substring(2);
+            const blob = new Blob([out], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${randomStr}.fjs`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            status.innerText = 'downloaded';
         }
     </script>
 
