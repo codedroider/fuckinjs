@@ -18,46 +18,63 @@ const fuckinjs = {
             if (!hiddenBin) continue;
             let bin = '';
             for (let j = 0; j < hiddenBin.length; j++) {
-                bin += hiddenBin[j] === '\u200b' ? '0' : '1';
+                if (hiddenBin[j] === '\u200b') {
+                    bin += '0';
+                } else if (hiddenBin[j] === '\u200c') {
+                    bin += '1';
+                }
             }
-            result += String.fromCharCode(parseInt(bin, 2));
+            if (bin) {
+                const parsed = parseInt(bin, 2);
+                if (!isNaN(parsed)) {
+                    result += String.fromCharCode(parsed);
+                }
+            }
         }
         return result;
     }
 };
 
-document.addEventListener('DOMContentLoaded', async function() {
-    const scripts = document.querySelectorAll('script[type="text/fuckinjs"]');
-    for (const scriptTag of scripts) {
-        let hiddenCode = '';
-        const src = scriptTag.getAttribute('src');
+(async function() {
+    async function runFuckinJs() {
+        const scripts = document.querySelectorAll('script[type="text/fuckinjs"]');
+        for (const scriptTag of scripts) {
+            let hiddenCode = '';
+            const src = scriptTag.getAttribute('src');
 
-        if (src) {
-            try {
-                const response = await fetch(src);
-                hiddenCode = await response.text();
-            } catch (e) {
-                console.error(`failed to load ${src}`);
-                continue;
+            if (src) {
+                try {
+                    const response = await fetch(src);
+                    hiddenCode = await response.text();
+                } catch (e) {
+                    console.error(`failed to load ${src}`);
+                    continue;
+                }
+            } else {
+                hiddenCode = scriptTag.textContent;
             }
-        } else {
-            hiddenCode = scriptTag.textContent;
-        }
 
-        const visibleJs = fuckinjs.decompile(hiddenCode);
+            const visibleJs = fuckinjs.decompile(hiddenCode);
 
-        if (visibleJs) {
-            try {
-                const newScript = document.createElement('script');
-                newScript.textContent = visibleJs;
-                document.body.appendChild(newScript);
-            } catch (e) {
-                console.error('fuckinjs runtime error');
+            if (visibleJs && visibleJs.trim()) {
+                try {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = visibleJs;
+                    document.body.appendChild(newScript);
+                } catch (e) {
+                    console.error('fuckinjs runtime error');
+                }
             }
-        }
-        
-        if (scriptTag.parentNode) {
-            scriptTag.parentNode.removeChild(scriptTag);
+            
+            if (scriptTag.parentNode) {
+                scriptTag.parentNode.removeChild(scriptTag);
+            }
         }
     }
-});
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', runFuckinJs);
+    } else {
+        runFuckinJs();
+    }
+})();
