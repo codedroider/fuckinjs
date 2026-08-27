@@ -26,7 +26,7 @@ const fuckinjs = {
     }
 };
 
-(async function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const scripts = document.querySelectorAll('script[type="text/fuckinjs"]');
     for (const scriptTag of scripts) {
         let hiddenCode = '';
@@ -48,7 +48,9 @@ const fuckinjs = {
 
         if (visibleJs) {
             try {
-                eval(visibleJs);
+                const newScript = document.createElement('script');
+                newScript.textContent = visibleJs;
+                document.body.appendChild(newScript);
             } catch (e) {
                 console.error('fuckinjs runtime error');
             }
@@ -58,4 +60,4 @@ const fuckinjs = {
             scriptTag.parentNode.removeChild(scriptTag);
         }
     }
-})();
+});
