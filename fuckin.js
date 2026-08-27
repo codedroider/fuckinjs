@@ -55,14 +55,15 @@ const fuckinjs = {
             }
 
             const visibleJs = fuckinjs.decompile(hiddenCode);
+            
+            console.log('Decoded code:', visibleJs);
+            console.log('Chars array:', visibleJs.split(''));
 
             if (visibleJs && visibleJs.trim()) {
                 try {
-                    const newScript = document.createElement('script');
-                    newScript.textContent = visibleJs;
-                    document.body.appendChild(newScript);
+                    (0, eval)(visibleJs);
                 } catch (e) {
-                    console.error('fuckinjs runtime error');
+                    console.error('fuckinjs runtime evaluation error:', e);
                 }
             }
             
